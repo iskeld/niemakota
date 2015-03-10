@@ -1,0 +1,29 @@
+{
+  "name": "niemakota",
+  "version": "0.1.0",
+  "description": "Simple service which receives notifications of absences (out-of-office, home-office) from Slack and publishes them on Google Calendar",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iskeld/niemakota.git"
+  },
+  "keywords": [
+    "slack"
+  ],
+  "author": "Maciej Wozniak (iskeld)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iskeld/niemakota/issues"
+  },
+  "homepage": "https://github.com/iskeld/niemakota",
+  "dependencies": {
+    "chrono": "^1.0.5",
+    "concat-stream": "^1.4.7",
+    "lodash": "^3.5.0",
+    "npmlog": "^1.2.0",
+    "z-schema": "^3.6.0"
+  }
+}
