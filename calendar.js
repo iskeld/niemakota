@@ -11,8 +11,8 @@ function sendEvent(calendarId, eventDetails, callback) {
 
     jwtClient.authorize(function (err, tokens) {
         if (err) {
-            log.error("Error in jwtClient.authorize. Error details: %j", err);
-            deferred.reject(new Error("Error in jwtClient.authorize: " + err));
+            log.error("Error in jwtClient.authorize. Error details: %s", err.toString());
+            deferred.reject(err);
         } else {
             var calendar = google.calendar({version: 'v3', auth: jwtClient});
             calendar.events.insert({
@@ -20,8 +20,8 @@ function sendEvent(calendarId, eventDetails, callback) {
                 resource: eventDetails
             }, function (err, result) {
                 if (err) {
-                    log.error("Error in calendar.events.insert. Error details: %j", err);
-                    deferred.reject(new Error("Error in calendar.events.insert. Error details: " + err));
+                    log.error("Error in calendar.events.insert. Error details: %s", err.toString());
+                    deferred.reject(err);
                 } else {
                     log.info("Calendar event successfully created");
                     deferred.resolve({
