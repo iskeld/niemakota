@@ -2,7 +2,6 @@ var http = require('http');
 var concat = require('concat-stream')
 var log = require('npmlog');
 var zSchema = require('z-schema');
-var _ = require('lodash');
 var config = require('./config');
 
 var rawContentType = {'Content-Type': 'text/plain'};
@@ -50,12 +49,12 @@ function handler(req, res) {
 
             if (!validateSchema(requestData)) {
                 res.writeHead(400, "Bad Request. Malformed JSON", rawContentType);
-                res.end();
+                res.end("Malformed JSON");
             } else {
                 if (!validateToken(requestData)) {
                     log.warn("request", "[403] Invalid token '%s'", requestData.token);
                     res.writeHead(403, "Invalid token", rawContentType);
-                    res.end();
+                    res.end("Invalid token");
                 } else {
                     res.writeHead(200, "OK", rawContentType);
                     res.end("Acknowledge " + requestData.text);
