@@ -21,9 +21,11 @@
   "homepage": "https://github.com/iskeld/niemakota",
   "dependencies": {
     "chrono": "^1.0.5",
+    "chrono-node": "^1.0.4",
     "concat-stream": "^1.4.7",
     "googleapis": "^2.0.1",
     "lodash": "^3.5.0",
+    "moment": "^2.9.0",
     "npmlog": "^1.2.0",
     "q": "^1.2.0",
     "z-schema": "^3.6.0"

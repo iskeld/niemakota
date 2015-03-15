@@ -1,8 +1,10 @@
 var http = require('http');
-var concat = require('concat-stream')
+var concat = require('concat-stream');
 var log = require('npmlog');
 var zSchema = require('z-schema');
+var querystring = require('querystring');
 var config = require('./config');
+var controller = require('./controller');
 
 var rawContentType = {'Content-Type': 'text/plain'};
 
@@ -41,11 +43,11 @@ function handler(req, res) {
         });
 
         req.pipe(concat(function(buffer) {
-            log.info("request", "buffer received");
+            log.verbose("request", "buffer received");
             
             var requestData = querystring.parse(buffer.toString());
 
-            log.verbose("request", "received data: %j", requestData);
+            log.info("request", "received data: %j", requestData);
 
             if (!validateSchema(requestData)) {
                 res.writeHead(400, "Bad Request. Malformed JSON", rawContentType);
@@ -56,8 +58,15 @@ function handler(req, res) {
                     res.writeHead(403, "Invalid token", rawContentType);
                     res.end("Invalid token");
                 } else {
-                    res.writeHead(200, "OK", rawContentType);
-                    res.end("Acknowledge " + requestData.text);
+                    controller.handle(requestData)
+                        .then(function(result) {
+                            res.writeHead(200, "OK", rawContentType);
+                            res.end("Event successfully added. Details: " + JSON.stringify(result));
+                        })
+                        .catch(function(error) {
+                            res.writeHead(500, "Error", rawContentType);
+                            res.end("Error " + error.toString());
+                        }).done();
                 }
             }
         }));
