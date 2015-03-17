@@ -1,6 +1,6 @@
 var config = {};
 
-config.token = process.env.SLACK_TOKEN || "________________________";
+config.tokens = [ "commandtoken1", "commandtoken2" ];
 config.port = process.env.LISTEN_PORT || 1337;
 config.calendarId = "mycalendar@gmail.com"
 

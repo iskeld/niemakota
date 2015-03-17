@@ -2,7 +2,7 @@
   "name": "niemakota",
   "version": "0.1.0",
   "description": "Simple service which receives notifications of absences (out-of-office, home-office) from Slack and publishes them on Google Calendar",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

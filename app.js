@@ -32,7 +32,13 @@ function validateSchema(obj) {
 }
 
 function validateToken(obj) {
-    return obj.token === config.token;
+    var tokensArray = config.tokens;
+    for (var i = 0; i < tokensArray.length; i++) {
+        if (obj.token === tokensArray[i]) { 
+            return true;
+        }
+    }
+    return false;
 }
 
 function handler(req, res) {
