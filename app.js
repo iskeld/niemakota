@@ -67,7 +67,7 @@ function handler(req, res) {
                     controller.handle(requestData)
                         .then(function(result) {
                             res.writeHead(200, "OK", rawContentType);
-                            res.end("Event successfully added. Details: " + JSON.stringify(result));
+                            res.end("Event successfully added. Url: " + result.url);
                         })
                         .catch(function(error) {
                             res.writeHead(500, "Error", rawContentType);
