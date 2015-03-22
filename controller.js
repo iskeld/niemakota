@@ -116,6 +116,7 @@ function handle(slackCommand, callback) {
         .then(postEvent)
         .then(function(postEventResult) { context.postEventResult = postEventResult; return context;})
         .then(notifier.sendNotification)
+        .then(function() { return context.postEventResult; })
         .nodeify(callback);
 
     return result;
