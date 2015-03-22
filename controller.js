@@ -2,16 +2,21 @@ var Q = require('q');
 var log = require('npmlog');
 var moment = require('moment');
 var chrono = require('chrono-node');
+var requestify = require('requestify');
 var calendar = require('./calendar');
 var config = require('./config');
+var notifier = require('./notifier');
+var models = require('./models');
 
 function getUserName(slackName, slackId) {
     // TODO: users database
     return slackName;
 }
 
-function parseDetails(eventType, txt) {
+function parseDetails(context) {
     var deferred = Q.defer();
+
+    var txt = context.command.text;
 
     var parseResults = chrono.parse(txt);
     if (parseResults.length === 0) {
@@ -46,11 +51,13 @@ function parseDetails(eventType, txt) {
     return deferred.promise;
 }
 
-function postEvent(googleCalendarEvent) {
-    return calendar.sendEvent(config.calendarId, googleCalendarEvent);
+function postEvent(context) {
+    return calendar.sendEvent(config.calendarId, context.calendarEvent);
 }
 
-function prepareGoogleEvent(eventType, user, details) {
+function prepareGoogleEvent(context) {
+    var details = context.details;
+
     var toGDate = function(date) {
         var result;
         if (details.allDay) {
@@ -61,7 +68,7 @@ function prepareGoogleEvent(eventType, user, details) {
         return result;
     };
 
-    var summary = [ '[' + eventType + ']', '[' + user + ']', details.summary ].join(' ');
+    var summary = [ '[' + context.eventType.toString() + ']', '[' + context.user + ']', details.summary ].join(' ');
     
     var result = {
         summary: summary,
@@ -78,23 +85,37 @@ function prepareGoogleEvent(eventType, user, details) {
     return result;
 }
 
-function handle(slackCommand, callback) {
-    var user = getUserName(slackCommand.user_name, slackCommand.user_id);
-
-    var eventType;
-    if (slackCommand.command.toLowerCase() === '/ooo') {
-        eventType = 'OOO';
-    } else if (slackCommand.command.toLowerCase() === '/ho') {
-        eventType = 'HO';
+function parseCommandType(command) {
+    if (!command) {
+        throw new Error("Command cannot be empty");
     }
+    if (command.toLowerCase() === '/ooo') {
+        return models.EventTypes.outOfOffice;
+    } else if (command.toLowerCase() === '/ho') {
+        return models.EventTypes.homeOffice;
+    }
+    throw new Error("Unknown command: '" + command + "'");
+}
 
-    var prepareEvent = function(details) { 
-        return Q.fcall(prepareGoogleEvent, eventType, user, details);
+function handle(slackCommand, callback) {
+    var context = { 
+        command: slackCommand,
+        user: getUserName(slackCommand.user_name, slackCommand.user_id)
     };
 
-    var result = parseDetails(eventType, slackCommand.text)
+    var prepareEvent = function(context) { 
+        return Q.fcall(prepareGoogleEvent, context);
+    };
+
+    var result = Q.fcall(parseCommandType, slackCommand.command)
+        .then(function(eventType) { context.eventType = eventType; return context;})
+        .then(parseDetails)
+        .then(function(details) { context.details = details; return context;})
         .then(prepareEvent)
+        .then(function(calendarEvent) { context.calendarEvent = calendarEvent; return context;})
         .then(postEvent)
+        .then(function(postEventResult) { context.postEventResult = postEventResult; return context;})
+        .then(notifier.sendNotification)
         .nodeify(callback);
 
     return result;
