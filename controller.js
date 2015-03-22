@@ -91,8 +91,8 @@ function parseCommandType(command) {
     }
     if (command.toLowerCase() === '/ooo') {
         return models.EventTypes.outOfOffice;
-    } else if (command.toLowerCase() === '/ho') {
-        return models.EventTypes.homeOffice;
+    } else if (command.toLowerCase() === '/ro') {
+        return models.EventTypes.remoteOffice;
     }
     throw new Error("Unknown command: '" + command + "'");
 }

@@ -1,7 +1,7 @@
 "use strict";
 
 var eventTypes = {
-    homeOffice: 1,
+    remoteOffice: 1,
     outOfOffice: 2
 };
 
@@ -10,8 +10,8 @@ function EventType (eventTypeId) {
 }
 
 EventType.prototype.toString = function() {
-    if (this._type === eventTypes.homeOffice) {
-        return "HO";
+    if (this._type === eventTypes.remoteOffice) {
+        return "RO";
     } else if (this._type === eventTypes.outOfOffice) {
         return "OOO";
     } else {
@@ -19,8 +19,8 @@ EventType.prototype.toString = function() {
     }
 };
 
-EventType.prototype.isHomeOffice = function() {
-    return (this._type === eventTypes.homeOffice);
+EventType.prototype.isRemoteOffice = function() {
+    return (this._type === eventTypes.remoteOffice);
 };
 
 EventType.prototype.isOutOfOffice = function() {
@@ -28,10 +28,10 @@ EventType.prototype.isOutOfOffice = function() {
 };
 
 var eventTypesEnum = {
-    homeOffice: new EventType(eventTypes.homeOffice),
+    remoteOffice: new EventType(eventTypes.remoteOffice),
     outOfOffice: new EventType(eventTypes.outOfOffice)
 };
-Object.freeze(eventTypesEnum.homeOffice);
+Object.freeze(eventTypesEnum.remoteOffice);
 Object.freeze(eventTypesEnum.outOfOffice);
 Object.freeze(eventTypesEnum);
 

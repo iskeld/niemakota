@@ -5,7 +5,7 @@ var requestify = require('requestify');
 var config = require('./config');
 
 function prepareMessage(context) {
-    var description = context.eventType.isHomeOffice() ? 'będzie pracował z domu' : 'będzie nieobecny';
+    var description = context.eventType.isRemoteOffice() ? 'będzie pracował zdalnie' : 'będzie nieobecny';
     var items = [ 
         context.user,
         description + ':',
