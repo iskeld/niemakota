@@ -6,49 +6,15 @@ var requestify = require('requestify');
 var calendar = require('./calendar');
 var config = require('./config');
 var notifier = require('./notifier');
+var absenceParser = require('./absenceParser');
 var models = require('./models');
 
 function getUserName(slackName, slackId) {
-    // TODO: users database
     return slackName;
 }
 
 function parseDetails(context) {
-    var deferred = Q.defer();
-
-    var txt = context.command.text;
-
-    var parseResults = chrono.parse(txt);
-    if (parseResults.length === 0) {
-        deferred.reject(new Error("Cannot parse input: '" + txt + "'"));
-        return deferred.promise;
-    }
-
-    var remains = txt.substr(0, parseResults[0].index) + txt.substr(parseResults[0].index + parseResults[0].text.length);
-    var location = null;
-    var locationIndex = remains.indexOf('@');
-
-    if (locationIndex > 0) {
-        location = remains.substr(locationIndex + 1);
-        remains = remains.substring(0, locationIndex);
-    }
-
-    var start = parseResults[0].start.date();
-    var end = new Date(start);
-    end.setDate(start.getDate() + 1);
-
-    var result = {
-        allDay: true,
-        start: start,
-        end: end,
-        summary: remains,
-        location: location
-    };
-
-    log.info("Parsed event details %j", result);
-
-    deferred.resolve(result);
-    return deferred.promise;
+    return absenceParser.parse(context);
 }
 
 function postEvent(context) {
@@ -57,10 +23,11 @@ function postEvent(context) {
 
 function prepareGoogleEvent(context) {
     var details = context.details;
+    var absenceDate = details.date;
 
     var toGDate = function(date) {
         var result;
-        if (details.allDay) {
+        if (absenceDate.allDay) {
             result = { date: moment(date).format('YYYY-MM-DD') };
         } else {
             result = { dateTime: date.toISOString() };
@@ -72,8 +39,8 @@ function prepareGoogleEvent(context) {
     
     var result = {
         summary: summary,
-        start: toGDate(details.start),
-        end: toGDate(details.end),
+        start: toGDate(absenceDate.start),
+        end: toGDate(absenceDate.end),
         reminders: { 
             useDefault: false
         }
