@@ -1,13 +1,15 @@
 var Q = require('q');
+var _ = require('lodash');
 var log = require('npmlog');
 var chronoCustom = require('./chronoCustomPL');
 
-function parse(context) {
+function parse(context, options) {
     var deferred = Q.defer();
+    options = _.isEmpty(options) ? {} : options;
 
     var txt = context.command.text;
+    var parseResults = _.isDate(options.referenceDate) ? chronoCustom.parse(txt, options.referenceDate) : chronoCustom.parse(txt);
 
-    var parseResults = chronoCustom.parse(txt);
     if (parseResults.length === 0) {
         deferred.reject(new Error("Cannot parse input: '" + txt + "'"));
         return deferred.promise;
@@ -25,8 +27,15 @@ function parse(context) {
     }
 
     var start = parseResults[0].start.date();
-    var end = new Date(start);
-    end.setDate(start.getDate() + 1);
+
+    var end;
+    var parsedEnd = parseResults[0].end;
+    if (_.isEmpty(parsedEnd)) {
+        end = new Date(start);
+        end.setDate(start.getDate() + 1);
+    } else {
+        end = parsedEnd.date();
+    }
 
     var result = {
         date: {
