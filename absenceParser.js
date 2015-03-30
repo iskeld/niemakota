@@ -34,7 +34,9 @@ function parse(context, options) {
         end = new Date(start);
         end.setDate(start.getDate() + 1);
     } else {
-        end = parsedEnd.date();
+        var parsedEndDate = parsedEnd.date();
+        end = new Date(parsedEndDate);
+        end.setDate(parsedEndDate.getDate() + 1);
     }
 
     var result = {

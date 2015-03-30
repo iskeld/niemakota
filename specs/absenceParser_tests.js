@@ -59,7 +59,7 @@ describe('absenceParser', function() {
 
         it('should parse date range in dd.MM format', function() {
             return parseAbsence("5.4 - 10.4 work from home @Pabianice, ul. Ludzi z cegłami", { referenceDate: new Date(2014, 0, 1)}).then(function(result) {
-                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 3, 5), new Date(2014, 3, 10)));
+                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 3, 5), new Date(2014, 3, 11)));
                 expect(result.summary).to.equal("work from home @Pabianice, ul. Ludzi z cegłami");
                 expect(result.location).to.equal("Pabianice, ul. Ludzi z cegłami");
             });
@@ -67,7 +67,7 @@ describe('absenceParser', function() {
 
         it('should parse casual date range in casual format', function() {
             return parseAbsence("od dziś do pojutrze praca z domu @Pabianice, ul. Ludzi z cegłami", { referenceDate: new Date(2014, 0, 1)}).then(function(result) {
-                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 0, 1), new Date(2014, 0, 3)));
+                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 0, 1), new Date(2014, 0, 4)));
                 expect(result.summary).to.equal("praca z domu @Pabianice, ul. Ludzi z cegłami");
                 expect(result.location).to.equal("Pabianice, ul. Ludzi z cegłami");
             });
@@ -75,7 +75,7 @@ describe('absenceParser', function() {
 
         it('should parse casual date range in mixed format', function() {
             return parseAbsence("od pojutrze do 10.1 praca z domu @Pabianice, ul. Ludzi z cegłami", { referenceDate: new Date(2014, 0, 1)}).then(function(result) {
-                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 0, 3), new Date(2014, 0, 10)));
+                expect(result.date).to.deep.equal(wholeDateRange(new Date(2014, 0, 3), new Date(2014, 0, 11)));
                 expect(result.summary).to.equal("praca z domu @Pabianice, ul. Ludzi z cegłami");
                 expect(result.location).to.equal("Pabianice, ul. Ludzi z cegłami");
             });
